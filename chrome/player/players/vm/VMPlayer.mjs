@@ -1,49 +1,57 @@
 import {DefaultPlayerEvents} from '../../enums/DefaultPlayerEvents.mjs';
 import {PlayerModes} from '../../enums/PlayerModes.mjs';
 import {RequestUtils} from '../../utils/RequestUtils.mjs';
-import DashPlayer from '../dash/DashPlayer.mjs';
-import {Vimeo2Dash} from './Vimeo2Dash.mjs';
+import HLSPlayer from "../hls/HLSPlayer.mjs";
 
-export default class VMPlayer extends DashPlayer {
+export default class VMPlayer extends HLSPlayer {
   constructor(client, options) {
     super(client, options);
   }
 
   async setSource(source) {
     try {
-      let manifest;
-      try {
-        const hc = [];
-        for (const key in source.headers) {
-          if (Object.hasOwn(source.headers, key)) {
-            hc.push({
-              operation: 'set',
-              header: key,
-              value: source.headers[key],
-            });
-          }
+      console.log('source URL: '+source.url);
+      const isEmbed = !source.url.includes('config?');
+      const hc = [];
+      for (const key in source.headers) {
+        if (Object.hasOwn(source.headers, key)) {
+          hc.push({
+            operation: 'set',
+            header: key,
+            value: source.headers[key],
+          });
         }
-
-        const xhr = await RequestUtils.request({
-          url: source.url,
-          header_commands: hc,
-          responseType: 'json',
-        });
-
-        const convert = new Vimeo2Dash();
-        manifest = convert.playlistToDash(source.url, xhr.response);
-      } catch (e) {
-        throw e;
       }
 
-      this.oldSource = source;
-      const blob = new Blob([manifest], {
-        type: 'application/dash+xml',
+      const xhr = await RequestUtils.request({
+        url: source.url,
+        header_commands: hc,
+        responseType: isEmbed ? 'text' : 'json',
       });
-      const uri = URL.createObjectURL(blob);
+
+      const config = xhr.response;
+      const hls = !isEmbed ? config?.request?.files?.hls : this.extractVimeoHlsUrlFromIframe(config);
+      if (!hls || !hls.cdns) {
+        throw new Error('Vimeo HLS data not found');
+      }
+      const defaultCdn =
+          hls.default_cdn && hls.cdns[hls.default_cdn]
+              ? hls.default_cdn
+              : Object.keys(hls.cdns)[0];
+
+      let hlsUrl = hls.cdns[defaultCdn].url;
+
+      if (!hlsUrl) {
+        throw new Error('Vimeo HLS URL missing');
+      }
+
+      // Safety: normalize URL (JSON.parse should already fix \u0026)
+      hlsUrl = hlsUrl.replace(/\\u0026/g, '&');
+
       this.source = source.copy();
-      this.source.url = uri;
-      this.source.mode = PlayerModes.ACCELERATED_DASH;
+      this.source.url = hlsUrl;
+      this.source.mode = PlayerModes.ACCELERATED_HLS;
+
     } catch (e) {
       console.error(e);
       this.emit(DefaultPlayerEvents.ERROR, e);
@@ -63,4 +71,19 @@ export default class VMPlayer extends DashPlayer {
   getSource() {
     return this.source;
   }
+
+  extractVimeoHlsUrlFromIframe(html) {
+    const match = html.match(
+        /window\.playerConfig\s*=\s*({[\s\S]+?});/
+    );
+
+    if (!match) {
+      throw new Error('Vimeo iframe: playerConfig not found');
+    }
+
+    const config = JSON.parse(match[1]);
+    return config?.request?.files?.hls;
+
+  }
+
 }

@@ -1258,34 +1258,23 @@ chrome.webRequest.onHeadersReceived.addListener(
       if ((details.statusCode >= 400 && details.statusCode < 600) || details.statusCode === 204) {
         return; // Client or server error. Ignore it
       }
-
-      if (url.startsWith('https://vod-adaptive') && url.includes('playlist.json') && url.includes('vimeo')) {
+      if (url.startsWith('https://player.vimeo.com') && (url.includes('config?') || url.includes('video'))) {
+        console.log('found vimeo');
         ext = 'vmpatch';
       } else if (details.initiator &&
       initiatorBlacklist.some((a) => {
         return details.initiator.startsWith(a);
       })) {
-        if (ext === 'json') {
-
-        } else {
-          return;
-        }
       }
 
       const output = CustomSourcePatternsMatcher.match(url);
       if (output) {
+        console.log('out!!!');
         ext = output;
       }
 
       if (BackgroundUtils.isSubtitles(ext)) {
         return handleSubtitles(url, frame, frame.requestHeaders.get(details.requestId));
-      } else if (ext === 'json') {
-      // Vimeo. Check if filename is master.json
-        const filename = URLUtils.get_file_name(url);
-        if (filename === 'master.json' && url.includes('/video/')) {
-          ext = 'mpd';
-          details.url = URLUtils.strip_queryhash(url).replace('master.json', 'master.mpd');
-        }
       }
 
       let mode = URLUtils.getModeFromExtension(ext);
