@@ -235,8 +235,19 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     });
     return true;
   } else if (msg.type === MessageTypes.FRAME_ADDED) {
+    // Preserve sources key to this frame's new URL
+    // This is needed because resetSelfAndChildren clears all sources, but we might have
+    // already detected a source for this frame via onHeadersReceived (e.g. Vimeo)
+    const preservedSources = frame.getSources().filter((s) => s.url === msg.url);
+
     const playerCount = frame.resetSelfAndChildren();
     frame.url = msg.url;
+
+    // Restore preserved sources
+    preservedSources.forEach((s) => {
+      frame.getSources().push(s);
+    });
+
     tab.playerCount -= playerCount;
     tab.playerCount = Math.max(0, tab.playerCount);
     checkURLMatch(frame);
@@ -1259,7 +1270,6 @@ chrome.webRequest.onHeadersReceived.addListener(
         return; // Client or server error. Ignore it
       }
       if (url.startsWith('https://player.vimeo.com') && (url.includes('config?') || url.includes('video'))) {
-        console.log('found vimeo');
         ext = 'vmpatch';
       } else if (details.initiator &&
       initiatorBlacklist.some((a) => {
@@ -1269,7 +1279,6 @@ chrome.webRequest.onHeadersReceived.addListener(
 
       const output = CustomSourcePatternsMatcher.match(url);
       if (output) {
-        console.log('out!!!');
         ext = output;
       }
 
