@@ -809,6 +809,9 @@
     "options_title": {
         "message": "FastStream のオプション"
     },
+    "options_search_placeholder": {
+        "message": "検索"
+    },
     "options_reviewbanner_header": {
         "message": "FastStream にご満足いただけましたか? 評価をお願いします!"
     },
@@ -859,6 +862,9 @@
     },
     "options_update_no": {
         "message": "このアップデートを無視"
+    },
+    "options_reset_search": {
+        "message": "リセット"
     },
     "options_video_header": {
         "message": "動画のオプション"
@@ -1153,5 +1159,17 @@
     },
     "player_outofstorage": {
         "message": "警告: お使いのブラウザはファイルストレージ機能を完全にはサポートしていません。これは、ブラウザのストレージ容量が不足しているか、長時間再起動されていないためです。一部の機能が期待通りに動作しない場合があります。"
+    },
+    "yterror_popup_body": {
+        "message": "FastStream には、YouTube 動画の再生に必要な userScript 権限がありません！"
+    },
+    "yterror_popup": {
+        "message": "YouTube 権限エラー"
+    },
+    "yterror_fix": {
+        "message": "権限を修正"
+    },
+    "yterror_permission_granted": {
+        "message": "権限が付与されました！YouTube 動画を再生するには、ページをリロードしてください。"
     }
 }

@@ -809,6 +809,9 @@
     "options_title": {
         "message": "FastStream Seçenekleri"
     },
+    "options_search_placeholder": {
+        "message": "Ara"
+    },
     "options_reviewbanner_header": {
         "message": "FastStream'i beğendiniz mi? Bir inceleme bırakın!"
     },
@@ -859,6 +862,9 @@
     },
     "options_update_no": {
         "message": "Bu güncellemeyi yok say"
+    },
+    "options_reset_search": {
+        "message": "Sıfırla"
     },
     "options_video_header": {
         "message": "Video Seçenekleri"
@@ -1153,5 +1159,17 @@
     },
     "player_outofstorage": {
         "message": "Uyarı: Tarayıcınız dosya depolama özelliklerini tam olarak desteklemiyor. Bunun nedeni, tarayıcınızın depolama alanının dolmuş olması veya uzun süredir yeniden başlatılmamış olması olabilir. Bazı özellikler beklendiği gibi çalışmayabilir."
+    },
+    "yterror_popup_body": {
+        "message": "FastStream, YouTube videolarını oynatmak için gereken userScript iznine sahip değil!"
+    },
+    "yterror_popup": {
+        "message": "YouTube İzin Hatası"
+    },
+    "yterror_fix": {
+        "message": "İzni Düzelt"
+    },
+    "yterror_permission_granted": {
+        "message": "İzin verildi! YouTube videolarını oynatmak için sayfayı yeniden yükleyin."
     }
 }

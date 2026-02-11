@@ -809,6 +809,9 @@
     "options_title": {
         "message": "Opcje FastStream"
     },
+    "options_search_placeholder": {
+        "message": "Szukaj"
+    },
     "options_reviewbanner_header": {
         "message": "Podoba Ci się FastStream? Zostaw recenzję!"
     },
@@ -859,6 +862,9 @@
     },
     "options_update_no": {
         "message": "Zignoruj tę aktualizację"
+    },
+    "options_reset_search": {
+        "message": "Nastawić"
     },
     "options_video_header": {
         "message": "Opcje wideo"
@@ -1153,5 +1159,17 @@
     },
     "player_outofstorage": {
         "message": "Ostrzeżenie: Twoja przeglądarka nie obsługuje w pełni funkcji przechowywania plików. Może to być spowodowane brakiem miejsca na dysku lub brakiem ponownego uruchomienia przeglądarki przez długi czas. Niektóre funkcje mogą nie działać zgodnie z oczekiwaniami."
+    },
+    "yterror_popup_body": {
+        "message": "FastStream nie ma uprawnienia userScript, które jest wymagane do odtwarzania filmów z YouTube!"
+    },
+    "yterror_popup": {
+        "message": "Błąd uprawnień YouTube"
+    },
+    "yterror_fix": {
+        "message": "Napraw uprawnienia"
+    },
+    "yterror_permission_granted": {
+        "message": "Uprawnienie przyznane! Proszę przeładować stronę, aby odtwarzać filmy z YouTube."
     }
 }

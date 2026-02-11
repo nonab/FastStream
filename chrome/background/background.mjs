@@ -371,6 +371,26 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       sendResponse(response);
     });
     return true;
+  } else if (msg.type === MessageTypes.ENSURE_YT_USERSCRIPT) {
+    if (!BackgroundUtils.isUserScriptsAvailable()) {
+      sendResponse({
+        success: false,
+        reason: 'userscripts_not_available',
+      });
+      return;
+    }
+
+    registerYTUserScript().then(() => {
+      sendResponse({
+        success: true,
+      });
+    }).catch((e) => {
+      sendResponse({
+        success: false,
+        reason: e.message,
+      });
+    });
+    return true;
   } else if (msg.type === MessageTypes.REQUEST_FULLSCREEN) {
     return handleFullscreenRequest(frame, msg, sendResponse);
   } else if (msg.type === MessageTypes.REQUEST_WINDOWED_FULLSCREEN) {
@@ -664,6 +684,30 @@ async function getPageFrame(frame) {
   }
 
   return null;
+}
+
+async function registerYTUserScript() {
+  const scripts = await chrome.userScripts.getScripts();
+
+  if (scripts.some((a) => a.id === 'fs_yt_script')) {
+    return;
+  }
+
+  await chrome.userScripts.configureWorld({
+    csp: 'script-src \'unsafe-eval\'; trusted-types \'none\';',
+  });
+
+  const script = {
+    id: 'fs_yt_script',
+    js: [{
+      file: 'userscripts/yt_runner.js',
+    }],
+    allFrames: true,
+    matches: ['https://www.youtube.com/robots.txt'],
+    runAt: 'document_start',
+  };
+  await chrome.userScripts.register([script]);
+  if (Logging) console.log('Registered yt_runner userscript');
 }
 
 async function checkIsFull(frame) {
@@ -1291,7 +1335,7 @@ chrome.webRequest.onHeadersReceived.addListener(
         if (details.type === 'media') {
           mode = PlayerModes.ACCELERATED_MP4;
         } else {
-          // Check url query parameters
+        // Check url query parameters
           const urlParams = URLUtils.get_url_params(url).values();
           for (const value of urlParams) {
             if (!URLUtils.is_url(value)) continue;

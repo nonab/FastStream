@@ -2,6 +2,7 @@
 
 import { DOMElements } from '../ui/DOMElements.mjs';
 
+// https://github.com/sweetalert2/sweetalert2
 /* !
 * sweetalert2 v11.12.4
 * Released under the MIT License.

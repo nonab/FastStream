@@ -1,6 +1,6 @@
 import {AnalyzerEvents} from '../../enums/AnalyzerEvents.mjs';
 import {EventEmitter} from '../eventemitter.mjs';
-import Pako from '../pako.mjs';
+import {Pako} from '../pako.mjs';
 import {Utils} from '../../utils/Utils.mjs';
 import {dHash} from './dHash.mjs';
 
