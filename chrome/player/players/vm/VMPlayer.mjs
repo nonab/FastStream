@@ -39,7 +39,7 @@ export default class VMPlayer extends HLSPlayer {
       });
 
       const config = xhr.response;
-      const hls = !isEmbed ? config?.request?.files?.hls : this.extractVimeoHlsUrlFromIframe(config);
+      const hls = !isEmbed ? config?.request?.files?.hls : this.extractVimeoHlsUrlFromIframePlayer(config);
       if (!hls || !hls.cdns) {
         throw new Error('Vimeo HLS data not found');
       }
@@ -80,7 +80,7 @@ export default class VMPlayer extends HLSPlayer {
     return this.source;
   }
 
-  extractVimeoHlsUrlFromIframe(html) {
+  extractVimeoHlsUrlFromIframePlayer(html) {
 
     const config = this.extractJsonConfig(html, 'window.playerConfig =');
 
